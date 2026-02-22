@@ -1,28 +1,47 @@
+'use client'
+
 import Image from "next/image";
 import HangulSoundChoiceModule from "@/app/components/HangulModule";
-
+import { createClient } from '@supabase/supabase-js'
 
 export default function Home() {
+  const handleTest = async () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!url || !anon) {
+      console.error('Missing env vars', { url: !!url, anon: !!anon })
+      alert('Missing env vars — check .env.local and restart dev server')
+      return
+    }
+
+    const supabase = createClient(url, anon)
+
+    const { data, error } = await supabase.auth.getSession()
+
+    console.log('getSession data:', data)
+    console.log('getSession error:', error)
+
+    alert(error ? `Error: ${error.message}` : '✅ Supabase connected (see console)')
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-pink-600">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-purple-800 sm:items-start">
-        <Image
-          className="animate-spin dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Woooooo! first project woop woop. 
-          </h1>
-              <div>
-      <HangulSoundChoiceModule />
-    </div>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-32 px-16 bg-white dark:bg-purple-800 sm:items-start">
+         {/* Supabase test button */}
+          <button
+            className="bg-pink-500 p-3 rounded-sm text-white mb-8"
+            onClick={handleTest}
+          >
+            Run Supabase test
+          </button>
 
+        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+          <HangulSoundChoiceModule />
+
+        
+
+          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
             <a
               href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
               className="font-medium text-zinc-950 dark:text-zinc-50"
@@ -38,31 +57,6 @@ export default function Home() {
             </a>{" "}
             center.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
         </div>
       </main>
     </div>
